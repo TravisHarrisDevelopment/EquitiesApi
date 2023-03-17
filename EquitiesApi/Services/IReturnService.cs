@@ -2,6 +2,6 @@
 {
     public interface IReturnsService
     {
-        Task<string> GetReturnsbySymbol(string symbol);
+        Task<string> GetReturnsBySymbol(string symbol, string from, string to);
     }
 }

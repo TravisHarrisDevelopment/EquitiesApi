@@ -14,10 +14,14 @@ namespace EquitiesApi.Controllers
             _returnsService = returnsService;
         }
 
-        [HttpGet("{symbol}")]
-        public async Task<IActionResult> GetReturns(string symbol)
+        [HttpGet("/{symbol}/")]
+        //[Route("GetReturns/{symbol:string}/{from:DateOnly?}/{to:DateOnly?}")]
+        public async Task<IActionResult> GetReturns (
+            [FromRoute] string symbol,
+            [FromQuery] string? from = "2023-03-01", 
+            [FromQuery] string? to = "2023-03-01")
         {
-            var info = await  _returnsService.GetReturnsbySymbol(symbol);
+            var info = await  _returnsService.GetReturnsBySymbol(symbol, from, to);
             return Ok(new { info });
         }
     }
