@@ -6,21 +6,23 @@ namespace EquitiesApi.Services
 {
     public class ReturnsService : IReturnsService
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiToken;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public ReturnsService(HttpClient httpClient, string apiToken)
+        public ReturnsService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
-            _httpClient = httpClient;
-            _apiToken = apiToken;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<string> GetReturnsbySymbol(string symbol)
         {
-            string token = "";
-            string url = $"https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}";
-            string url2 = "https://cloud.iexapis.com/stable/stock/aapl/quote?token=";
-            var response = await _httpClient.GetAsync(url);
+            string token = _configuration.GetValue<string>("ApiToken");
+
+            var httpClient = _httpClientFactory.CreateClient("Iex");
+            string testURL = $"https://cloud.iexapis.com/stable/time-series/HISTORICAL_PRICES/{symbol}?token={token}&from=2023-03-01&to=2023-03-01";
+            var response = await httpClient.GetAsync(
+                $"{symbol}?token={token}&from=2023-03-01&to=2023-03-01");
             response.EnsureSuccessStatusCode();
             var content = await response.Content.ReadAsStringAsync();
             dynamic quote = JsonConvert.DeserializeObject(content);

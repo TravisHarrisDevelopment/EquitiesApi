@@ -7,17 +7,22 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddEnvironmentVariables("EQUITIESAPI");
 
-
 // Add services to the container.
 builder.Services.AddHttpClient("Iex", httpClient =>
 {
-    httpClient.BaseAddress = new Uri("")
-}
+    httpClient.BaseAddress = new Uri("https://cloud.iexapis.com/stable/time-series/HISTORICAL_PRICES/");
+});
+
+builder.Services.AddScoped<IReturnsService, ReturnsService>();
+builder.Services.AddScoped<IAlphaService, AlphaService>();
 //-----------below registered client moving to factory---------------
 //builder.Services.AddHttpClient<IReturnsService, ReturnsService>();
 //builder.Services.AddScoped<IAlphaService, AlphaService>();
 //-------------------------------------------------------------------
 //builder.Services.AddScoped<IReturnsService, ReturnsService>();
+
+
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
