@@ -18,8 +18,8 @@ namespace EquitiesApi.Controllers
         //[Route("GetReturns/{symbol:string}/{from:DateOnly?}/{to:DateOnly?}")]
         public async Task<IActionResult> GetReturns (
             [FromRoute] string symbol,
-            [FromQuery] string? from = "2023-03-01", 
-            [FromQuery] string? to = "2023-03-01")
+            [FromQuery] string? from = "2023-03-06", 
+            [FromQuery] string? to = "2023-03-10")
         {
             var info = await  _returnsService.GetReturnsBySymbol(symbol, from, to);
             return Ok(new { info });

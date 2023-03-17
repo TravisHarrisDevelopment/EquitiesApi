@@ -1,4 +1,4 @@
-namespace EquitiesApi
+/*namespace EquitiesApi
 {
     public class Return
     {
@@ -41,3 +41,4 @@ namespace EquitiesApi
         }
     }
     }
+*/

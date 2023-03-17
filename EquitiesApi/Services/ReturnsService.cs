@@ -1,6 +1,8 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using EquitiesApi.Models;
 
 namespace EquitiesApi.Services
 {
@@ -15,7 +17,7 @@ namespace EquitiesApi.Services
             _configuration = configuration;
         }
 
-        public async Task<string> GetReturnsBySymbol(string symbol, string from, string to)
+        public async Task<IEnumerable<Return>> GetReturnsBySymbol(string symbol, string from, string to)
         {
             string token = _configuration.GetValue<string>("ApiToken");
 
@@ -24,9 +26,19 @@ namespace EquitiesApi.Services
             var response = await httpClient.GetAsync(
                 $"{symbol}?token={token}&from={from}&to={to}");
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            dynamic quote = JsonConvert.DeserializeObject(content);
-            return content;
+            var json = await response.Content.ReadAsStringAsync();
+            
+            var returns = JsonSerializer.Deserialize<List<Return>>(json);
+
+            foreach(var r in returns)
+            {
+                r.DailyReturn = r.Close - r.Open;
+            }
+            return returns;
         }
+
+        //Daily return is closing price - opening price
+
+
     }
 }
