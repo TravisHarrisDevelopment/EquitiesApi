@@ -15,11 +15,17 @@ namespace EquitiesApi.Controllers
             _alphaService = alphaService;
         }
 
-        [HttpGet(Name = "GetAlpha")]
-        public async Task<IActionResult> Get()
+        [HttpGet("/{symbol}/{benchmarkSymbol}/")]
+        public async Task<IActionResult> GetAlpha(
+            [FromRoute] string symbol,
+            [FromRoute] string benchmarkSymbol,
+            [FromQuery] string? from = "2023-03-06",
+            [FromQuery] string? to = "2023-03-10")
         {
-            var info = await _alphaService.GetAlphabySymbol("AAPL");
+            var info = await _alphaService.GetAlpha(symbol, benchmarkSymbol, from, to);
             return Ok(new { info });
         }
+
+
     }
 }

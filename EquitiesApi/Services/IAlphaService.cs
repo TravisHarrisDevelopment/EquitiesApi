@@ -1,7 +1,11 @@
-﻿namespace EquitiesApi.Services
+﻿using EquitiesApi.Models;
+
+namespace EquitiesApi.Services
 {
     public interface IAlphaService
     {
-        Task<string> GetAlphabySymbol(string symbol);
+        Task<Alpha> GetAlpha(string symbol, string benchmarkSymbol, string from, string to);
+
+        
     }
 }

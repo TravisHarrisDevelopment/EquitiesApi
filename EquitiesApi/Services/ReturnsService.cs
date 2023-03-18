@@ -32,13 +32,11 @@ namespace EquitiesApi.Services
 
             foreach(var r in returns)
             {
-                r.DailyReturn = r.Close - r.Open;
+                
+                r.DailyReturn = ((r.Close - r.Open) / r.Open) * 100;
+
             }
             return returns;
         }
-
-        //Daily return is closing price - opening price
-
-
     }
 }
