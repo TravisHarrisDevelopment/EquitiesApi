@@ -14,6 +14,14 @@ namespace EquitiesApi.Controllers
             _returnsService = returnsService;
         }
 
+        /// <summary>
+        /// Gets returns for the stock symbol provided for the date ranges provided.  Maximum date span for retrieval is 366 days.  
+        /// If no dates are supplied default values are used.
+        /// </summary>
+        /// <param name="symbol">Stock symbol for which you're requesting returns.</param>
+        /// <param name="from">The start date for which you're pulling data.</param>
+        /// <param name="to">The end date for which you're pulling data.</param>
+        /// <returns></returns>
         [HttpGet("/{symbol}/")]
         //[Route("GetReturns/{symbol:string}/{from:DateOnly?}/{to:DateOnly?}")]
         public async Task<IActionResult> GetReturns (
