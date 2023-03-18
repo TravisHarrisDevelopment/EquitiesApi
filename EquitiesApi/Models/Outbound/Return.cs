@@ -1,7 +1,7 @@
 ﻿//using EquitiesApi.Helpers;
 using System.Text.Json.Serialization;
 
-namespace EquitiesApi.Models
+namespace EquitiesApi.Outbound.Models
 {
     public class Return
     {

@@ -34,7 +34,8 @@ namespace EquitiesApi.Controllers
             }
 
             var info = await _returnsService.GetReturnsBySymbol(symbol, fromDate.ToString("yyyy-MM-dd"), toDate.ToString("yyyy-MM-dd"));
-            return Ok(new { info });
+            //return Ok(new { info });
+            return Ok(info);
 
 
         }
