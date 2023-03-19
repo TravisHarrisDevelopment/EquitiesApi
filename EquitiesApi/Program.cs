@@ -17,13 +17,6 @@ builder.Services.AddHttpClient("Iex", httpClient =>
 
 builder.Services.AddScoped<IReturnsService, ReturnsService>();
 builder.Services.AddScoped<IAlphaService, AlphaService>();
-//-----------below registered client moving to factory---------------
-//builder.Services.AddHttpClient<IReturnsService, ReturnsService>();
-//builder.Services.AddScoped<IAlphaService, AlphaService>();
-//-------------------------------------------------------------------
-//builder.Services.AddScoped<IReturnsService, ReturnsService>();
-
-
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

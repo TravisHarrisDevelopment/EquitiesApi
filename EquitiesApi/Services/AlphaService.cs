@@ -79,7 +79,8 @@ namespace EquitiesApi.Services
 
         public double CalculateVariance(IEnumerable<Return> benchmark)
         {
-            //Variance is the difference between return and mean return squared and dividing the sum of the squares by number of returns in the set
+            //Variance is the difference between return and mean return squared and dividing the sum of the squares
+            //by number of returns in the set
           
             var bSum = benchmark.Sum(b => b.DailyReturn);
             var bAvg = bSum / benchmark.Count();
