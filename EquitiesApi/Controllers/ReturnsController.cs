@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using EquitiesApi.Services;
+using EquitiesApi.Models.Outbound;
+
 
 namespace EquitiesApi.Controllers
 {
@@ -15,62 +17,44 @@ namespace EquitiesApi.Controllers
         }
 
         /// <summary>
-        /// Gets returns for the stock symbol provided for the date ranges provided.  Maximum date span for retrieval is 366 days.  
-        /// If no dates are supplied default values are used.
+        /// Gets daily returns as percentage for the stock symbol provided for the date ranges provided.  Maximum date 
+        /// span for retrieval is 366 days.  
+        /// If no dates are supplied default values for year-to-date are used.
         /// </summary>
         /// <param name="symbol">Stock symbol for which you're requesting returns.</param>
-        /// <param name="from">The start date for which you're pulling data.</param>
-        /// <param name="to">The end date for which you're pulling data.</param>
-        /// <returns></returns>
+        /// <param name="from">The start date for which you're pulling data.<br />Use date format yyyy-MM-dd.</param>
+        /// <param name="to">The end date for which you're pulling data.<br />Use date format yyyy-MM-dd.</param>
+        /// <returns>Returns a JSON array of daily returns as percentage for requested date range</returns>
+        /// <response code="200">Returns JSON Array of daily returns as percentage for the requested date range</response>
+        [ProducesResponseType(typeof(Return), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [HttpGet("/{symbol}/")]
-        //[Route("GetReturns/{symbol:string}/{from:DateOnly?}/{to:DateOnly?}")]
         public async Task<IActionResult> GetReturns (
             [FromRoute] string symbol,
-            [FromQuery] string? from = "2023-03-06", 
-            [FromQuery] string? to = "2023-03-10")
+            [FromQuery] string? from = null, 
+            [FromQuery] string? to = null)
         {
-            DateTime fromDate, toDate;
-            var fromResult = DateTime.TryParse(from, out fromDate);
-            var toResult = DateTime.TryParse(to, out toDate);
-            if (! fromResult && toResult)
+            try
             {
-                return BadRequest("cannot parse dates - use format \"yyyy-MM-DD\"");
+                var dates = Validation.ValidateDates(from, to);
+                var info = await _returnsService.GetReturnsBySymbol(symbol, 
+                    dates.Item1.ToString("yyyy-MM-dd"), 
+                    dates.Item2.ToString("yyyy-MM-dd"));
+
+                return Ok(info);
             }
-            if (! ValidateDates(fromDate, toDate))
+            catch (InvalidOperationException ex)
             {
-                return BadRequest("Dates may not span more than 1 year and from date must occur before to date.");
+                return BadRequest(ex.Message);
             }
+            catch(Exception ex)
+            {
+                var error = new ObjectResult(ex.Message);
+                error.StatusCode = StatusCodes.Status500InternalServerError;
 
-            var info = await _returnsService.GetReturnsBySymbol(symbol, fromDate.ToString("yyyy-MM-dd"), toDate.ToString("yyyy-MM-dd"));
-            //return Ok(new { info });
-            return Ok(info);
-
-
-        }
-
-        private bool ValidateDates(DateTime fromDate, DateTime toDate)
-        {
-            //validate that fromDate < toDate
-            var rangeValid = fromDate < toDate ? true : false;
-
-            //validate that fromDate thru toDate is less than 1 year
-            var span = toDate - fromDate;
-            var spanValid = span.Days <= 366 ? true : false;
-
-            return rangeValid && spanValid;
-
+                return error;
+            }
         }
     }
 }
-
-/*
-- The URL for the call should include the stock ticker symbol to get returns for, and
-should accept parameters for the “from date” and “to date”
-- Check to make sure the date range is not too large
-- If no dates are passed in, assume the time period is YTD
-- Leverage IEX to get the ticker’s historical prices (or mock a similar endpoint):
-o https://iexcloud.io/docs/api-basics
-o https://iexcloud.io/docs/core
-- Calculate daily returns for the days specified
-- Respond to the GET with the returns as JSON
-*/

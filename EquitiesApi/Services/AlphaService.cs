@@ -1,58 +1,39 @@
-﻿using EquitiesApi.Helpers;
-using EquitiesApi.Models.DTO;
-using EquitiesApi.Outbound.Models;
-using System.Text.Json;
+﻿using EquitiesApi.Models.Outbound;
 
 namespace EquitiesApi.Services
 {
     public class AlphaService : IAlphaService
     {
-        //private readonly IHttpClientFactory _httpClientFactory;
-        //private readonly IConfiguration _configuration;
         private readonly IReturnsService _returnsService;
 
-        public AlphaService(IReturnsService returnsService/*IHttpClientFactory httpClientFactory, IConfiguration configuration*/)
+        public AlphaService(IReturnsService returnsService)
         {
-            //_httpClientFactory = httpClientFactory;
-            //_configuration = configuration;
             _returnsService = returnsService;
         }
 
         public async Task<Alpha> GetAlpha(string symbol, string benchmarkSymbol, string from, string to)
         {
-            //string token = _configuration.GetValue<string>("ApiToken");
-
-            //var httpClient = _httpClientFactory.CreateClient("Iex");
-
             var returns = await _returnsService.GetReturnsBySymbol(symbol, from, to);
             var benchmarkReturns = await _returnsService.GetReturnsBySymbol(benchmarkSymbol, from, to);
-            //var response = await httpClient.GetAsync($"{symbol}?token={token}&from={from}&to={to}");
-            //var responseBenchmark = await httpClient.GetAsync($"{benchmarkSymbol}?token={token}&from={from}&to={to}");
-            //response.EnsureSuccessStatusCode();
-            //responseBenchmark.EnsureSuccessStatusCode();
-            //var json = await response.Content.ReadAsStringAsync();
-            //var benchmarkJson = await responseBenchmark.Content.ReadAsStringAsync();
-
-            //var returnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(json);
-            //var benchmarkReturnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(benchmarkJson);
-
-            //var returns = Mapper.Map(returnsDTO);
-            //var benchmarkReturns = Mapper.Map(benchmarkReturnsDTO);
 
             var alpha = CalculateAlpha(returns, benchmarkReturns);
 
             return alpha;
         }
+
         private Alpha CalculateAlpha(IEnumerable<Return> returns, IEnumerable<Return> benchmark)
         {
             /*
-             * putting together a quick swag at risk free rate of return
+             * a quick swag at risk free rate of return:
              * long term average interest rate on 1 Year T-Bill:  2.87%
              * current annual inflation rate: 6.04%
              * T-Bill rate - inflation rate = 2.87% - 6.04% = -3.17%
              * 
+             * Beta = covariance(returns, benchmark)/variance (benchmark)
+             * 
              * Alpha is the mean return of the investment - risk free rate of return - (beta * (benchmark mean return - riskfree rate of return)
-             * Alpha = R-R[f]-(beta * (R[m]-R[f])
+             * Alpha = R-R[f]-(Beta * (R[m]-R[f])
+             * 
              */
 
             var riskFreeRate = -0.0317;
@@ -73,17 +54,14 @@ namespace EquitiesApi.Services
             
         }
 
-        private double CalculateBeta(IEnumerable<Return>returns, IEnumerable<Return> benchmark)
-        {
-            return 2.0;
-        }
-
         private double CalculateCovariance(IEnumerable<Return> returns, IEnumerable<Return> benchmark)
         {
             if (! (returns.Count() == benchmark.Count()) )
             {
                 throw new Exception("Investment and Benchmark have a differing number of returns for this date range.");
             }
+
+            // determine the sum and average of returns for ticker and benchmark
             var count = returns.Count();
             var rSum = returns.Sum(r => r.DailyReturn);
             var rAvg = rSum / count;
@@ -115,21 +93,16 @@ namespace EquitiesApi.Services
             var sumofSquares = days.Sum(d => d);
             return sumofSquares / benchmark.Count();
         }
-
-        /*
-         * Alpha = Return - RiskFreeReturn - (beta * (benchmarkReturn-RiskFreeReturn))
-         * 
-         * Beta = covariance(returns, benchmark)/variance (benchmark)
-         * */
     }
 
     
 }
-    /*Get Alpha 
-- Similar to the above, the URL should include the ticker and date range, with the
-addition of another ticker for the “benchmark” 
-- Again, leverage IEX to get the ticker and benchmark’s historical prices 
-- Calculate the alpha (one number) of the ticker vs. the benchmark over the time period 
-requested 
-- Respond to the GET with the alpha number as JSON
-    */
+/* Assignment for Get Alpha:
+ * Get Alpha 
+ * - Similar to the above, the URL should include the ticker and date range, with the
+ *   addition of another ticker for the “benchmark” 
+ * - Again, leverage IEX to get the ticker and benchmark’s historical prices 
+ * - Calculate the alpha (one number) of the ticker vs. the benchmark over the time period 
+ *   requested 
+ * - Respond to the GET with the alpha number as JSON 
+ */

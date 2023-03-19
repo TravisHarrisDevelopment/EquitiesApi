@@ -1,4 +1,4 @@
-﻿namespace EquitiesApi.Outbound.Models
+﻿namespace EquitiesApi.Models.Outbound
 {
     public class Alpha
     {

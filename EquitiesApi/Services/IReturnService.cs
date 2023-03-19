@@ -1,4 +1,4 @@
-﻿using EquitiesApi.Outbound.Models;
+﻿using EquitiesApi.Models.Outbound;
 
 namespace EquitiesApi.Services
 {

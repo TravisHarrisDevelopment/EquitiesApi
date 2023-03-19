@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace EquitiesApi.Models.DTO
+namespace EquitiesApi.Services.Private
 {
     public class ReturnDTO
     {
@@ -16,5 +16,6 @@ namespace EquitiesApi.Models.DTO
 
         [JsonPropertyName("symbol")]
         public string Symbol { get; set; }
+
     }
 }
