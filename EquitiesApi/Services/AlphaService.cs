@@ -54,7 +54,7 @@ namespace EquitiesApi.Services
             
         }
 
-        private double CalculateCovariance(IEnumerable<Return> returns, IEnumerable<Return> benchmark)
+        public double CalculateCovariance(IEnumerable<Return> returns, IEnumerable<Return> benchmark)
         {
             if (! (returns.Count() == benchmark.Count()) )
             {
@@ -77,7 +77,7 @@ namespace EquitiesApi.Services
             return daysSum / (count - 1);
         }
 
-        private double CalculateVariance(IEnumerable<Return> benchmark)
+        public double CalculateVariance(IEnumerable<Return> benchmark)
         {
             //Variance is the difference between return and mean return squared and dividing the sum of the squares by number of returns in the set
           
