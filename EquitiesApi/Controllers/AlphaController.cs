@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using EquitiesApi.Services;
-using EquitiesApi.Models.Outbound;
+using EquitiesApi.Services.OutboundModels;
 
 namespace EquitiesApi.Controllers
 {
@@ -23,8 +22,8 @@ namespace EquitiesApi.Controllers
         /// </summary>
         /// <param name="symbol">Stock symbol for equity of interest.</param>
         /// <param name="benchmarkSymbol">Stock symbol for benchmark.</param>
-        /// <param name="from">The start date for which you're pulling data.Use date format yyyy-MM-dd.</param>
-        /// <param name="to">The end date for which you're pulling data. Use date format yyyy-MM-dd.</param>
+        /// <param name="from">The start date for which you're pulling data.<br />Use date format yyyy-MM-dd.</param>
+        /// <param name="to">The end date for which you're pulling data.<br />Use date format yyyy-MM-dd.</param>
         /// <returns>Returns a JSON representation of Alpha (1 number)for requested date range</returns>
         /// <response code="200">Returns JSON representation of Alpha (1 number) for requested date range</response>
         [ProducesResponseType(typeof(Alpha), StatusCodes.Status200OK)]

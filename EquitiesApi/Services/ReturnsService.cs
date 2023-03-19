@@ -1,9 +1,5 @@
-﻿using System.Net.Http;
-using System.Threading.Tasks;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using EquitiesApi.Models;
-using EquitiesApi.Models.Outbound;
+﻿using System.Text.Json;
+using EquitiesApi.Services.OutboundModels;
 
 namespace EquitiesApi.Services
 {

@@ -2,13 +2,13 @@
 {
     public static class ExtensionMethods
     {
-        public static IEnumerable<Models.Outbound.Return> Translate(this IEnumerable<Private.ReturnDTO> input)
+        public static IEnumerable<OutboundModels.Return> Translate(this IEnumerable<Private.ReturnDTO> input)
         {
             var ordered = input.OrderBy(s => s.Date).ToList();
-            var returns = new List<Models.Outbound.Return>();
+            var returns = new List<OutboundModels.Return>();
             foreach (var item in ordered)
             {
-                var ret = new Models.Outbound.Return()
+                var ret = new OutboundModels.Return()
                 {
                     Date = item.Date,
                     Open = item.Open,
