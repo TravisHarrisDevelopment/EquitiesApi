@@ -7,33 +7,37 @@ namespace EquitiesApi.Services
 {
     public class AlphaService : IAlphaService
     {
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _configuration;
+        //private readonly IHttpClientFactory _httpClientFactory;
+        //private readonly IConfiguration _configuration;
+        private readonly IReturnsService _returnsService;
 
-        public AlphaService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+        public AlphaService(IReturnsService returnsService/*IHttpClientFactory httpClientFactory, IConfiguration configuration*/)
         {
-            _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
+            //_httpClientFactory = httpClientFactory;
+            //_configuration = configuration;
+            _returnsService = returnsService;
         }
 
         public async Task<Alpha> GetAlpha(string symbol, string benchmarkSymbol, string from, string to)
         {
-            string token = _configuration.GetValue<string>("ApiToken");
+            //string token = _configuration.GetValue<string>("ApiToken");
 
-            var httpClient = _httpClientFactory.CreateClient("Iex");
+            //var httpClient = _httpClientFactory.CreateClient("Iex");
 
-            var response = await httpClient.GetAsync($"{symbol}?token={token}&from={from}&to={to}");
-            var responseBenchmark = await httpClient.GetAsync($"{benchmarkSymbol}?token={token}&from={from}&to={to}");
-            response.EnsureSuccessStatusCode();
-            responseBenchmark.EnsureSuccessStatusCode();
-            var json = await response.Content.ReadAsStringAsync();
-            var benchmarkJson = await responseBenchmark.Content.ReadAsStringAsync();
+            var returns = await _returnsService.GetReturnsBySymbol(symbol, from, to);
+            var benchmarkReturns = await _returnsService.GetReturnsBySymbol(benchmarkSymbol, from, to);
+            //var response = await httpClient.GetAsync($"{symbol}?token={token}&from={from}&to={to}");
+            //var responseBenchmark = await httpClient.GetAsync($"{benchmarkSymbol}?token={token}&from={from}&to={to}");
+            //response.EnsureSuccessStatusCode();
+            //responseBenchmark.EnsureSuccessStatusCode();
+            //var json = await response.Content.ReadAsStringAsync();
+            //var benchmarkJson = await responseBenchmark.Content.ReadAsStringAsync();
 
-            var returnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(json);
-            var benchmarkReturnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(benchmarkJson);
+            //var returnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(json);
+            //var benchmarkReturnsDTO = JsonSerializer.Deserialize<List<ReturnDTO>>(benchmarkJson);
 
-            var returns = Mapper.Map(returnsDTO);
-            var benchmarkReturns = Mapper.Map(benchmarkReturnsDTO);
+            //var returns = Mapper.Map(returnsDTO);
+            //var benchmarkReturns = Mapper.Map(benchmarkReturnsDTO);
 
             var alpha = CalculateAlpha(returns, benchmarkReturns);
 
